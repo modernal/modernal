@@ -322,9 +322,8 @@ PyObject * Listener_meth_change(Listener * self, PyObject * args, PyObject * kwa
         self->ctx->al.Listenerfv(AL_VELOCITY, value);
     }
     if (orientation != Py_None) {
-        float quat[4] = {};
-        py_floats(quat, 4, 4, position);
         float value[6] = {};
+        py_floats(value, 6, 6, orientation);
         self->ctx->al.Listenerfv(AL_ORIENTATION, value);
     }
     Py_RETURN_NONE;
