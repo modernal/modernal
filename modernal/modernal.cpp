@@ -248,6 +248,7 @@ PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwargs) 
     }
 
     if (self->bound != 0) {
+        PyErr_BadInternalCall();
         return NULL;
     }
 
