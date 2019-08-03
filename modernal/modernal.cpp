@@ -276,7 +276,7 @@ PyMemberDef Buffer_members[] = {
 PyType_Slot Buffer_slots[] = {
     {Py_tp_methods, Buffer_methods},
     {Py_tp_members, Buffer_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -339,7 +339,7 @@ PyMethodDef Listener_methods[] = {
 
 PyType_Slot Listener_slots[] = {
     {Py_tp_methods, Listener_methods},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -582,7 +582,7 @@ PyType_Slot Source_slots[] = {
     {Py_tp_methods, Source_methods},
     {Py_tp_getset, Source_getset},
     {Py_tp_members, Source_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -757,7 +757,7 @@ PyMemberDef Context_members[] = {
 PyType_Slot Context_slots[] = {
     {Py_tp_methods, Context_methods},
     {Py_tp_members, Context_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
