@@ -1,0 +1,3 @@
+recursive-include modernal *.*
+include README.md
+include LICENSE
