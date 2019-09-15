@@ -37,7 +37,7 @@ void * _load_al_method(const char * method) {
 #include <dlfcn.h>
 
 void * _load_al_method(const char * method) {
-    static void * libopenal = dlopen("libopenal.so.1", RTLD_LAZY);
+    static void * libopenal = dlopen("libopenal.so", RTLD_LAZY);
     return (void *)dlsym(libopenal, method);
 }
 
