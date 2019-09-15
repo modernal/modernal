@@ -739,18 +739,18 @@ PyMethodDef Context_methods[] = {
 };
 
 PyMemberDef Context_members[] = {
-    {"listener", T_OBJECT_EX, offsetof(Context, listener), READONLY, NULL},
+    {"listener", T_OBJECT, offsetof(Context, listener), READONLY, NULL},
 
-    {"FORMAT_MONO8", T_OBJECT_EX, offsetof(Context, consts.format_mono8), READONLY, NULL},
-    {"FORMAT_MONO16", T_OBJECT_EX, offsetof(Context, consts.format_mono16), READONLY, NULL},
-    {"FORMAT_STEREO8", T_OBJECT_EX, offsetof(Context, consts.format_stereo8), READONLY, NULL},
-    {"FORMAT_STEREO16", T_OBJECT_EX, offsetof(Context, consts.format_stereo16), READONLY, NULL},
-    {"INVERSE_DISTANCE", T_OBJECT_EX, offsetof(Context, consts.inverse_distance), READONLY, NULL},
-    {"INVERSE_DISTANCE_CLAMPED", T_OBJECT_EX, offsetof(Context, consts.inverse_distance_clamped), READONLY, NULL},
-    {"LINEAR_DISTANCE", T_OBJECT_EX, offsetof(Context, consts.linear_distance), READONLY, NULL},
-    {"LINEAR_DISTANCE_CLAMPED", T_OBJECT_EX, offsetof(Context, consts.linear_distance_clamped), READONLY, NULL},
-    {"EXPONENT_DISTANCE", T_OBJECT_EX, offsetof(Context, consts.exponent_distance), READONLY, NULL},
-    {"EXPONENT_DISTANCE_CLAMPED", T_OBJECT_EX, offsetof(Context, consts.exponent_distance_clamped), READONLY, NULL},
+    {"FORMAT_MONO8", T_OBJECT, offsetof(Context, consts.format_mono8), READONLY, NULL},
+    {"FORMAT_MONO16", T_OBJECT, offsetof(Context, consts.format_mono16), READONLY, NULL},
+    {"FORMAT_STEREO8", T_OBJECT, offsetof(Context, consts.format_stereo8), READONLY, NULL},
+    {"FORMAT_STEREO16", T_OBJECT, offsetof(Context, consts.format_stereo16), READONLY, NULL},
+    {"INVERSE_DISTANCE", T_OBJECT, offsetof(Context, consts.inverse_distance), READONLY, NULL},
+    {"INVERSE_DISTANCE_CLAMPED", T_OBJECT, offsetof(Context, consts.inverse_distance_clamped), READONLY, NULL},
+    {"LINEAR_DISTANCE", T_OBJECT, offsetof(Context, consts.linear_distance), READONLY, NULL},
+    {"LINEAR_DISTANCE_CLAMPED", T_OBJECT, offsetof(Context, consts.linear_distance_clamped), READONLY, NULL},
+    {"EXPONENT_DISTANCE", T_OBJECT, offsetof(Context, consts.exponent_distance), READONLY, NULL},
+    {"EXPONENT_DISTANCE_CLAMPED", T_OBJECT, offsetof(Context, consts.exponent_distance_clamped), READONLY, NULL},
     {},
 };
 
