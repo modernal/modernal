@@ -1,11 +1,7 @@
 import platform
 import re
-import sys
 
 from setuptools import Extension, setup
-
-if sys.version_info < (3, 0):
-    raise Exception('Python 2 is not supported!')
 
 PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin'}
 
