@@ -36,7 +36,7 @@ extra_compile_args = {
     'darwin': ['-Wno-deprecated-declarations'],
 }
 
-extra_linker_args = {
+extra_link_args = {
     'windows': [],
     'linux': [],
     'darwin': [],
@@ -47,7 +47,7 @@ modernal = Extension(
     define_macros=[],
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
-    extra_link_args=extra_linker_args[target],
+    extra_link_args=extra_link_args[target],
     sources=[
         'modernal/modernal.cpp',
     ],
