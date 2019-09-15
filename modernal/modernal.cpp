@@ -604,7 +604,7 @@ PyType_Slot Source_slots[] = {
 
 PyType_Spec Source_spec = {"modernal.Source", sizeof(Source), 0, Py_TPFLAGS_DEFAULT, Source_slots};
 
-Context * modernal_meth_context(PyObject * self, PyObject * args, PyObject * kwargs) {
+Context * modernal_meth_create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
     static char * keywords[] = {"device_name", "libal", NULL};
 
     const char * device_name = NULL;
@@ -787,7 +787,7 @@ PyType_Slot Context_slots[] = {
 PyType_Spec Context_spec = {"modernal.Context", sizeof(Context), 0, Py_TPFLAGS_DEFAULT, Context_slots};
 
 PyMethodDef module_methods[] = {
-    {"context", (PyCFunction)modernal_meth_context, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"create_context", (PyCFunction)modernal_meth_create_context, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
