@@ -115,6 +115,13 @@ struct Context : public BaseObject {
     } consts;
 
     struct {
+        LPALCOPENDEVICE OpenDevice;
+        LPALCCREATECONTEXT CreateContext;
+        LPALCMAKECONTEXTCURRENT MakeContextCurrent;
+        LPALCGETERROR GetError;
+    } alc;
+
+    struct {
         LPALENABLE Enable;
         LPALDISABLE Disable;
         LPALISENABLED IsEnabled;
@@ -624,12 +631,18 @@ Context * modernal_meth_create_context(PyObject * self, PyObject * args, PyObjec
         return NULL;
     }
 
-    LPALCOPENDEVICE alcOpenDevice = (LPALCOPENDEVICE)load_al_method(res->libal, "alcOpenDevice");
-    LPALCCREATECONTEXT alcCreateContext = (LPALCCREATECONTEXT)load_al_method(res->libal, "alcCreateContext");
-    LPALCMAKECONTEXTCURRENT alcMakeContextCurrent = (LPALCMAKECONTEXTCURRENT)load_al_method(res->libal, "alcMakeContextCurrent");
-    LPALCGETERROR alcGetError = (LPALCGETERROR)load_al_method(res->libal, "alcGetError");
+    #define load(name) *(void **)&res->alc.name = (void *)load_al_method(res->libal, "alc" # name)
+    load(OpenDevice);
+    load(CreateContext);
+    load(MakeContextCurrent);
+    load(GetError);
+    #undef load
 
-    res->device = alcOpenDevice(device_name);
+    if (PyErr_Occurred()) {
+        return NULL;
+    }
+
+    res->device = res->alc.OpenDevice(device_name);
     if (!res->device) {
         return NULL;
     }
@@ -638,88 +651,94 @@ Context * modernal_meth_create_context(PyObject * self, PyObject * args, PyObjec
         0, 0,
     };
 
-    res->ctx = alcCreateContext(res->device, attribs);
+    res->ctx = res->alc.CreateContext(res->device, attribs);
     if (!res->ctx) {
         return NULL;
     }
 
-    if (!alcMakeContextCurrent(res->ctx)) {
+    if (!res->alc.MakeContextCurrent(res->ctx)) {
         return NULL;
     }
 
-    res->al.Enable = (LPALENABLE)load_al_method(res->libal, "alEnable");
-    res->al.Disable = (LPALDISABLE)load_al_method(res->libal, "alDisable");
-    res->al.IsEnabled = (LPALISENABLED)load_al_method(res->libal, "alIsEnabled");
-    res->al.GetString = (LPALGETSTRING)load_al_method(res->libal, "alGetString");
-    res->al.GetBooleanv = (LPALGETBOOLEANV)load_al_method(res->libal, "alGetBooleanv");
-    res->al.GetIntegerv = (LPALGETINTEGERV)load_al_method(res->libal, "alGetIntegerv");
-    res->al.GetFloatv = (LPALGETFLOATV)load_al_method(res->libal, "alGetFloatv");
-    res->al.GetDoublev = (LPALGETDOUBLEV)load_al_method(res->libal, "alGetDoublev");
-    res->al.GetBoolean = (LPALGETBOOLEAN)load_al_method(res->libal, "alGetBoolean");
-    res->al.GetInteger = (LPALGETINTEGER)load_al_method(res->libal, "alGetInteger");
-    res->al.GetFloat = (LPALGETFLOAT)load_al_method(res->libal, "alGetFloat");
-    res->al.GetDouble = (LPALGETDOUBLE)load_al_method(res->libal, "alGetDouble");
-    res->al.GetError = (LPALGETERROR)load_al_method(res->libal, "alGetError");
-    res->al.IsExtensionPresent = (LPALISEXTENSIONPRESENT)load_al_method(res->libal, "alIsExtensionPresent");
-    res->al.GetProcAddress = (LPALGETPROCADDRESS)load_al_method(res->libal, "alGetProcAddress");
-    res->al.GetEnumValue = (LPALGETENUMVALUE)load_al_method(res->libal, "alGetEnumValue");
-    res->al.Listenerf = (LPALLISTENERF)load_al_method(res->libal, "alListenerf");
-    res->al.Listener3f = (LPALLISTENER3F)load_al_method(res->libal, "alListener3f");
-    res->al.Listenerfv = (LPALLISTENERFV)load_al_method(res->libal, "alListenerfv");
-    res->al.Listeneri = (LPALLISTENERI)load_al_method(res->libal, "alListeneri");
-    res->al.Listener3i = (LPALLISTENER3I)load_al_method(res->libal, "alListener3i");
-    res->al.Listeneriv = (LPALLISTENERIV)load_al_method(res->libal, "alListeneriv");
-    res->al.GetListenerf = (LPALGETLISTENERF)load_al_method(res->libal, "alGetListenerf");
-    res->al.GetListener3f = (LPALGETLISTENER3F)load_al_method(res->libal, "alGetListener3f");
-    res->al.GetListenerfv = (LPALGETLISTENERFV)load_al_method(res->libal, "alGetListenerfv");
-    res->al.GetListeneri = (LPALGETLISTENERI)load_al_method(res->libal, "alGetListeneri");
-    res->al.GetListener3i = (LPALGETLISTENER3I)load_al_method(res->libal, "alGetListener3i");
-    res->al.GetListeneriv = (LPALGETLISTENERIV)load_al_method(res->libal, "alGetListeneriv");
-    res->al.GenSources = (LPALGENSOURCES)load_al_method(res->libal, "alGenSources");
-    res->al.DeleteSources = (LPALDELETESOURCES)load_al_method(res->libal, "alDeleteSources");
-    res->al.IsSource = (LPALISSOURCE)load_al_method(res->libal, "alIsSource");
-    res->al.Sourcef = (LPALSOURCEF)load_al_method(res->libal, "alSourcef");
-    res->al.Source3f = (LPALSOURCE3F)load_al_method(res->libal, "alSource3f");
-    res->al.Sourcefv = (LPALSOURCEFV)load_al_method(res->libal, "alSourcefv");
-    res->al.Sourcei = (LPALSOURCEI)load_al_method(res->libal, "alSourcei");
-    res->al.Source3i = (LPALSOURCE3I)load_al_method(res->libal, "alSource3i");
-    res->al.Sourceiv = (LPALSOURCEIV)load_al_method(res->libal, "alSourceiv");
-    res->al.GetSourcef = (LPALGETSOURCEF)load_al_method(res->libal, "alGetSourcef");
-    res->al.GetSource3f = (LPALGETSOURCE3F)load_al_method(res->libal, "alGetSource3f");
-    res->al.GetSourcefv = (LPALGETSOURCEFV)load_al_method(res->libal, "alGetSourcefv");
-    res->al.GetSourcei = (LPALGETSOURCEI)load_al_method(res->libal, "alGetSourcei");
-    res->al.GetSource3i = (LPALGETSOURCE3I)load_al_method(res->libal, "alGetSource3i");
-    res->al.GetSourceiv = (LPALGETSOURCEIV)load_al_method(res->libal, "alGetSourceiv");
-    res->al.SourcePlayv = (LPALSOURCEPLAYV)load_al_method(res->libal, "alSourcePlayv");
-    res->al.SourceStopv = (LPALSOURCESTOPV)load_al_method(res->libal, "alSourceStopv");
-    res->al.SourceRewindv = (LPALSOURCEREWINDV)load_al_method(res->libal, "alSourceRewindv");
-    res->al.SourcePausev = (LPALSOURCEPAUSEV)load_al_method(res->libal, "alSourcePausev");
-    res->al.SourcePlay = (LPALSOURCEPLAY)load_al_method(res->libal, "alSourcePlay");
-    res->al.SourceStop = (LPALSOURCESTOP)load_al_method(res->libal, "alSourceStop");
-    res->al.SourceRewind = (LPALSOURCEREWIND)load_al_method(res->libal, "alSourceRewind");
-    res->al.SourcePause = (LPALSOURCEPAUSE)load_al_method(res->libal, "alSourcePause");
-    res->al.SourceQueueBuffers = (LPALSOURCEQUEUEBUFFERS)load_al_method(res->libal, "alSourceQueueBuffers");
-    res->al.SourceUnqueueBuffers = (LPALSOURCEUNQUEUEBUFFERS)load_al_method(res->libal, "alSourceUnqueueBuffers");
-    res->al.GenBuffers = (LPALGENBUFFERS)load_al_method(res->libal, "alGenBuffers");
-    res->al.DeleteBuffers = (LPALDELETEBUFFERS)load_al_method(res->libal, "alDeleteBuffers");
-    res->al.IsBuffer = (LPALISBUFFER)load_al_method(res->libal, "alIsBuffer");
-    res->al.BufferData = (LPALBUFFERDATA)load_al_method(res->libal, "alBufferData");
-    res->al.Bufferf = (LPALBUFFERF)load_al_method(res->libal, "alBufferf");
-    res->al.Buffer3f = (LPALBUFFER3F)load_al_method(res->libal, "alBuffer3f");
-    res->al.Bufferfv = (LPALBUFFERFV)load_al_method(res->libal, "alBufferfv");
-    res->al.Bufferi = (LPALBUFFERI)load_al_method(res->libal, "alBufferi");
-    res->al.Buffer3i = (LPALBUFFER3I)load_al_method(res->libal, "alBuffer3i");
-    res->al.Bufferiv = (LPALBUFFERIV)load_al_method(res->libal, "alBufferiv");
-    res->al.GetBufferf = (LPALGETBUFFERF)load_al_method(res->libal, "alGetBufferf");
-    res->al.GetBuffer3f = (LPALGETBUFFER3F)load_al_method(res->libal, "alGetBuffer3f");
-    res->al.GetBufferfv = (LPALGETBUFFERFV)load_al_method(res->libal, "alGetBufferfv");
-    res->al.GetBufferi = (LPALGETBUFFERI)load_al_method(res->libal, "alGetBufferi");
-    res->al.GetBuffer3i = (LPALGETBUFFER3I)load_al_method(res->libal, "alGetBuffer3i");
-    res->al.GetBufferiv = (LPALGETBUFFERIV)load_al_method(res->libal, "alGetBufferiv");
-    res->al.DopplerFactor = (LPALDOPPLERFACTOR)load_al_method(res->libal, "alDopplerFactor");
-    res->al.DopplerVelocity = (LPALDOPPLERVELOCITY)load_al_method(res->libal, "alDopplerVelocity");
-    res->al.SpeedOfSound = (LPALSPEEDOFSOUND)load_al_method(res->libal, "alSpeedOfSound");
-    res->al.DistanceModel = (LPALDISTANCEMODEL)load_al_method(res->libal, "alDistanceModel");
+    #define load(name) *(void **)&res->al.name = (void *)load_al_method(res->libal, "al" # name)
+    load(Enable);
+    load(Disable);
+    load(IsEnabled);
+    load(GetString);
+    load(GetBooleanv);
+    load(GetIntegerv);
+    load(GetFloatv);
+    load(GetDoublev);
+    load(GetBoolean);
+    load(GetInteger);
+    load(GetFloat);
+    load(GetDouble);
+    load(GetError);
+    load(IsExtensionPresent);
+    load(GetProcAddress);
+    load(GetEnumValue);
+    load(Listenerf);
+    load(Listener3f);
+    load(Listenerfv);
+    load(Listeneri);
+    load(Listener3i);
+    load(Listeneriv);
+    load(GetListenerf);
+    load(GetListener3f);
+    load(GetListenerfv);
+    load(GetListeneri);
+    load(GetListener3i);
+    load(GetListeneriv);
+    load(GenSources);
+    load(DeleteSources);
+    load(IsSource);
+    load(Sourcef);
+    load(Source3f);
+    load(Sourcefv);
+    load(Sourcei);
+    load(Source3i);
+    load(Sourceiv);
+    load(GetSourcef);
+    load(GetSource3f);
+    load(GetSourcefv);
+    load(GetSourcei);
+    load(GetSource3i);
+    load(GetSourceiv);
+    load(SourcePlayv);
+    load(SourceStopv);
+    load(SourceRewindv);
+    load(SourcePausev);
+    load(SourcePlay);
+    load(SourceStop);
+    load(SourceRewind);
+    load(SourcePause);
+    load(SourceQueueBuffers);
+    load(SourceUnqueueBuffers);
+    load(GenBuffers);
+    load(DeleteBuffers);
+    load(IsBuffer);
+    load(BufferData);
+    load(Bufferf);
+    load(Buffer3f);
+    load(Bufferfv);
+    load(Bufferi);
+    load(Buffer3i);
+    load(Bufferiv);
+    load(GetBufferf);
+    load(GetBuffer3f);
+    load(GetBufferfv);
+    load(GetBufferi);
+    load(GetBuffer3i);
+    load(GetBufferiv);
+    load(DopplerFactor);
+    load(DopplerVelocity);
+    load(SpeedOfSound);
+    load(DistanceModel);
+    #undef load
+
+    if (PyErr_Occurred()) {
+        return NULL;
+    }
 
     res->listener = PyObject_New(Listener, Listener_type);
 
