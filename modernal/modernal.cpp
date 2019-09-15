@@ -7,11 +7,11 @@
 
 #include <Windows.h>
 
-void * _load_al_method(void * libal, const char * method) {
+void * _load_al_method_raw(void * libal, const char * method) {
     return (void *)GetProcAddress((HMODULE)libal, method);
 }
 
-#define load_al_method(libal, method) _load_al_method(libal, method)
+#define load_al_method_raw(libal, method) _load_al_method_raw(libal, method)
 #define load_al_library(name) LoadLibrary(name);
 #define DEFAULT_LIBAL "openal32.dll"
 
@@ -21,7 +21,7 @@ void * _load_al_method(void * libal, const char * method) {
 #import <stdlib.h>
 #import <string.h>
 
-void * _load_al_method(const char * method) {
+void * _load_al_method_raw(const char * method) {
     NSSymbol symbol = 0;
 
     if (NSIsSymbolNameDefined(method)) {
@@ -31,7 +31,7 @@ void * _load_al_method(const char * method) {
     return symbol ? NSAddressOfSymbol(symbol) : NULL;
 }
 
-#define load_al_method(libal, method) _load_al_method("_" method)
+#define load_al_method_raw(libal, method) _load_al_method_raw("_" method)
 #define load_al_library(name) "OpenAL"
 #define DEFAULT_LIBAL "OpenAL"
 
@@ -39,15 +39,26 @@ void * _load_al_method(const char * method) {
 
 #include <dlfcn.h>
 
-void * _load_al_method(void * libal, const char * method) {
+void * _load_al_method_raw(void * libal, const char * method) {
     return (void *)dlsym(libal, method);
 }
 
-#define load_al_method(libal, method) _load_al_method(libal, method)
+#define load_al_method_raw(libal, method) _load_al_method_raw(libal, method)
 #define load_al_library(name) dlopen(name, RTLD_LAZY);
 #define DEFAULT_LIBAL "libopenal.so"
 
 #endif
+
+void * load_al_method(void * libal, const char * name) {
+    if (PyErr_Occurred()) {
+        return NULL;
+    }
+    void * res = load_al_method_raw(libal, name);
+    if (!res) {
+        PyErr_Format(PyExc_Exception, "%s not found", name);
+    }
+    return res;
+}
 
 inline int py_floats(float * ptr, int min, int max, PyObject * tup) {
     PyObject * seq = PySequence_Fast(tup, "not iterable");
@@ -608,6 +619,11 @@ Context * modernal_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->prev = res;
 
     res->libal = load_al_library(libal);
+    if (!res->libal) {
+        PyErr_Format(PyExc_Exception, "%s not loaded", libal);
+        return NULL;
+    }
+
     LPALCOPENDEVICE alcOpenDevice = (LPALCOPENDEVICE)load_al_method(res->libal, "alcOpenDevice");
     LPALCCREATECONTEXT alcCreateContext = (LPALCCREATECONTEXT)load_al_method(res->libal, "alcCreateContext");
     LPALCMAKECONTEXTCURRENT alcMakeContextCurrent = (LPALCMAKECONTEXTCURRENT)load_al_method(res->libal, "alcMakeContextCurrent");
