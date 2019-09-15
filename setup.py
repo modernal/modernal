@@ -32,14 +32,14 @@ libraries = {
 
 extra_compile_args = {
     'windows': [],
-    'linux': [],
-    'darwin': ['-Wno-deprecated-declarations'],
+    'linux': ['-fpermissive'],
+    'darwin': ['-fpermissive', '-Wno-deprecated-declarations'],
 }
 
 extra_link_args = {
     'windows': [],
     'linux': [],
-    'darwin': [],
+    'darwin': ['-Wno-deprecated'],
 }
 
 modernal = Extension(
