@@ -3,7 +3,7 @@ import re
 
 from setuptools import Extension, setup
 
-PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin'}
+PLATFORMS = {'windows', 'linux', 'darwin'}
 
 target = platform.system().lower()
 
@@ -27,21 +27,18 @@ if target == 'darwin':
 libraries = {
     'windows': [],
     'linux': ['dl'],
-    'cygwin': [],
     'darwin': [],
 }
 
 extra_compile_args = {
     'windows': [],
     'linux': [],
-    'cygwin': [],
     'darwin': ['-Wno-deprecated-declarations'],
 }
 
 extra_linker_args = {
     'windows': [],
     'linux': [],
-    'cygwin': [],
     'darwin': [],
 }
 
