@@ -43,7 +43,7 @@ void * _load_al_method(void * libal, const char * method) {
     return (void *)dlsym(libal, method);
 }
 
-#define load_al_method(method) _load_al_method(method)
+#define load_al_method(libal, method) _load_al_method(libal, method)
 #define load_al_library(name) dlopen(name, RTLD_LAZY);
 #define DEFAULT_LIBAL "libopenal.so"
 
